@@ -21,22 +21,29 @@ readkey <- function()
 lDirectories = dir(sPathRoot, full.names = TRUE, pattern = 'QID')
 Quantlets    = dir(sPathRoot, full.names = FALSE, pattern = 'QID')
 iCounter = 1
-QuantletList = cbind(Quantlets, rep("", length(Quantlets)), rep("", length(Quantlets)))
+QuantletList = cbind(Quantlets, rep("NO", length(Quantlets)), rep("NO", length(Quantlets)), rep("NO", length(Quantlets)))
 while(iCounter <= length(lDirectories)){
-  sSubPathRoot = setwd(lDirectories[iCounter]) 
+  sSubPathRoot = lDirectories[iCounter]
   QuantletName = strsplit(Quantlets[iCounter], "-")[[1]][3]
   RFile = paste(QuantletName, ".R",sep = "") 
   MFile = paste(QuantletName, ".m",sep = "")
-  
+  SASFile = paste(QuantletName, ".sas",sep = "")
   lRFile = RFile %in% dir(sSubPathRoot, full.names = FALSE)
   lMFile = MFile %in% dir(sSubPathRoot, full.names = FALSE)
-  
+  lSASFile = SASFile %in% dir(sSubPathRoot, full.names = FALSE)
   QuantletList[iCounter, 1] = QuantletName
   if(lRFile){
-    QuantletList[iCounter, 2] = "R"
+    QuantletList[iCounter, 2] = "YES"
   }
   if(lMFile){
-    QuantletList[iCounter, 3] = "M"
+    QuantletList[iCounter, 3] = "YES"
   }
+  
+  if(lSASFile){
+    QuantletList[iCounter, 4] = "YES"
+  }
+  
   iCounter = iCounter + 1
 }
+
+write.table(QuantletList, "Quantlet2.txt", sep = " ")
